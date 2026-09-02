@@ -685,7 +685,7 @@ ${question}`;
     render();
 
     const prompt = buildFollowUpPrompt(state.astrolabe, flattenSections(state.readingSections), priorHistory, question);
-    callAI(prompt, 1024).then(text => {
+    callAI(prompt, 3000).then(text => {
       entry.answer = text;
     }).catch(e => {
       console.error('follow-up failed', e);
