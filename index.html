@@ -502,6 +502,23 @@
     followUpLoading: false
   };
 
+  // ---------------- usage limits (per-browser, simple abuse guard) ----------------
+  const USAGE_KEY_READING = 'zwds_reading_used_v1';
+  const USAGE_KEY_FOLLOWUP = 'zwds_followup_used_v1';
+
+  function hasUsedReading(){
+    try{ return localStorage.getItem(USAGE_KEY_READING) === '1'; }catch(e){ return false; }
+  }
+  function markReadingUsed(){
+    try{ localStorage.setItem(USAGE_KEY_READING, '1'); }catch(e){}
+  }
+  function hasUsedFollowup(){
+    try{ return localStorage.getItem(USAGE_KEY_FOLLOWUP) === '1'; }catch(e){ return false; }
+  }
+  function markFollowupUsed(){
+    try{ localStorage.setItem(USAGE_KEY_FOLLOWUP, '1'); }catch(e){}
+  }
+
   function escapeHtml(s){
     return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
@@ -617,6 +634,31 @@ ${schemaLines}
     return SECTIONS.map(s => `[${s.title}]\n${sections[s.id] || ''}`).join('\n\n');
   }
 
+  function buildShareText(){
+    const a = state.astrolabe;
+    const header = `[${state.name}님의 자미두수]\n${a.sign} · ${a.zodiac}띠 · ${a.fiveElementsClass}\n\n`;
+    const body = flattenSections(state.readingSections).replace(/\*\*/g, '');
+    return header + body;
+  }
+
+  async function shareResult(){
+    const text = buildShareText();
+    if(navigator.share){
+      try{
+        await navigator.share({ title: `${state.name}님의 자미두수`, text });
+      }catch(e){
+        // user cancelled the share sheet - nothing to do
+      }
+      return;
+    }
+    try{
+      await navigator.clipboard.writeText(text);
+      alert('결과가 클립보드에 복사됐어요. 카카오톡 등에 붙여넣기 해주세요!');
+    }catch(e){
+      window.prompt('아래 내용을 복사해서 카카오톡 등에 붙여넣어 주세요:', text);
+    }
+  }
+
   function buildFollowUpPrompt(a, priorReadingText, history, question){
     const historyText = history.map(h => `Q: ${h.question}\nA: ${h.answer}`).join('\n\n');
     return `당신은 자미두수(紫微斗數)에 능숙하고 친근한 한국어 사주 상담가입니다. 아래는 한 사람의 명반 정보와 앞서 전달한 사주풀이, 그리고 지금까지 나눈 추가 질문들입니다. 마지막 질문에 명반 내용에 근거해서 친근하고 간결하게(2~4문장) 한국어로 답해주세요. 핵심 문구는 **볼드**로 강조해도 좋습니다. 그 외 마크다운 문법(#, -, * 등)은 사용하지 마세요.
@@ -677,11 +719,12 @@ ${question}`;
   }
 
   function handleFollowUpSubmit(){
-    if(state.followUpLoading) return;
+    if(state.followUpLoading || hasUsedFollowup()) return;
     const input = document.getElementById('followUpInput');
     const question = (input && input.value || '').trim().slice(0, 200);
     if(!question) return;
     input.value = '';
+    markFollowupUsed();
     const entry = { question, answer: null, error: false };
     const priorHistory = state.followUps.slice();
     state.followUps.push(entry);
@@ -703,6 +746,10 @@ ${question}`;
   // ---------------- flow ----------------
   async function handleSubmit(){
     const errEl = document.getElementById('formError');
+    if(hasUsedReading()){
+      if(errEl) errEl.textContent = '죄송해요, 체험은 1인당 1회만 가능해요.';
+      return;
+    }
     const nameInput = document.getElementById('nameInput');
     const name = (nameInput && nameInput.value || '').trim().slice(0, 12);
     if(!name){
@@ -726,6 +773,7 @@ ${question}`;
       return;
     }
 
+    markReadingUsed();
     state.astrolabe = astrolabe;
     state.screen = 'result';
     render();
@@ -747,6 +795,12 @@ ${question}`;
   // ---------------- rendering ----------------
   function renderStartHTML(){
     const isSolar = state.calType === 'solar';
+    const limitReached = hasUsedReading();
+    if(limitReached){
+      return `
+        <p class="summary-sub" style="text-align:center">이 브라우저에서는 이미 체험을 사용하셨어요.<br>체험은 1인당 1회로 제한하고 있어요. 양해 부탁드려요 🙏</p>
+      `;
+    }
     return `
       <label class="field-label">이름</label>
       <input id="nameInput" class="text-input" maxlength="12" placeholder="이름을 입력해주세요" value="${escapeHtml(state.name)}">
@@ -863,15 +917,21 @@ ${question}`;
       return `<div class="qa-pair"><p class="qa-q">${escapeHtml(f.question)}</p>${answerHtml}</div>`;
     }).join('');
 
+    const followupInputRow = hasUsedFollowup()
+      ? `<p class="summary-sub" style="margin-top:10px">추가 질문은 1회만 가능해요. 이미 사용하셨어요.</p>`
+      : `
+        <div class="followup-row">
+          <input id="followUpInput" class="text-input" placeholder="예: 올해 연애운은 어때요?" maxlength="200" ${state.followUpLoading ? 'disabled' : ''}>
+          <button class="primary-btn followup-btn" data-action="ask-followup" ${state.followUpLoading ? 'disabled' : ''}>질문하기</button>
+        </div>
+      `;
+
     return `
       <div class="reading-section">
         <p class="reading-title">더 궁금한 점이 있나요?</p>
         <div class="reading-rule"></div>
         ${qaHtml}
-        <div class="followup-row">
-          <input id="followUpInput" class="text-input" placeholder="예: 올해 연애운은 어때요?" maxlength="200" ${state.followUpLoading ? 'disabled' : ''}>
-          <button class="primary-btn followup-btn" data-action="ask-followup" ${state.followUpLoading ? 'disabled' : ''}>질문하기</button>
-        </div>
+        ${followupInputRow}
       </div>
     `;
   }
@@ -903,6 +963,7 @@ ${question}`;
       </div>
       ${renderFollowUpSection()}
       <div class="result-actions">
+        ${state.readingSections ? `<button class="ghost-btn" data-action="share-result">카카오톡으로 내보내기</button>` : ''}
         <button class="ghost-btn" data-action="go-home">다른 사람 보기</button>
       </div>
     `;
@@ -942,6 +1003,8 @@ ${question}`;
       runReading(state.astrolabe);
     } else if(action === 'ask-followup'){
       handleFollowUpSubmit();
+    } else if(action === 'share-result'){
+      shareResult();
     }
   }
 
