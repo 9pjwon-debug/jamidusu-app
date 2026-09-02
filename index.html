@@ -18,16 +18,22 @@
     --danger:#d9857a;
   }
   *{box-sizing:border-box;}
+  html, body{
+    margin:0;
+    min-height:100%;
+    background:var(--bg);
+  }
   #ziwei-root{
     font-family:'Pretendard Variable', Pretendard, -apple-system, sans-serif;
     background:
       radial-gradient(ellipse 700px 400px at 50% -60px, rgba(201,163,92,.12), transparent 65%),
       var(--bg);
     color:var(--ink);
-    min-height:100%;
+    min-height:100vh;
     padding:20px 10px 40px;
     display:flex;
     justify-content:center;
+    align-items:center;
     overflow-x:hidden;
   }
   .wrap{width:100%;max-width:440px;min-width:0;}
@@ -56,11 +62,7 @@
   }
 
   .panel{
-    background:linear-gradient(180deg,var(--panel),var(--panel-alt));
-    border:1px solid var(--hairline);
-    border-radius:18px;
     padding:18px 14px;
-    box-shadow:0 20px 46px rgba(0,0,0,.5);
   }
 
   .field-label{
@@ -807,17 +809,15 @@ ${question}`;
         <button class="pill-btn ${state.gender === '여' ? 'active' : ''}" data-action="set-gender" data-gender="여">여</button>
       </div>
 
-      <label class="field-label">달력</label>
-      <div class="checkbox-row">
-        <input type="checkbox" id="calTypeCheck" ${!isSolar ? 'checked' : ''}>
-        <label for="calTypeCheck">음력으로 입력할게요</label>
-      </div>
-
       <label class="field-label">생년월일</label>
       <div class="row3">
         <select id="dateYear" class="text-input">${yearOptions(state.dateYear)}</select>
         <select id="dateMonth" class="text-input">${monthOptions(state.dateMonth)}</select>
         <select id="dateDay" class="text-input">${dayOptions(state.dateDay, isSolar ? 31 : 30)}</select>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="calTypeCheck" ${!isSolar ? 'checked' : ''}>
+        <label for="calTypeCheck">음력으로 입력할게요</label>
       </div>
       ${!isSolar ? `
         <div class="checkbox-row">
