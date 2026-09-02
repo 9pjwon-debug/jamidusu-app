@@ -486,6 +486,10 @@
     name: '',
     gender: '남',
     calType: 'solar',  // 'solar' | 'lunar'
+    solarDate: '',
+    lunarYear: new Date().getFullYear(),
+    lunarMonth: 1,
+    lunarDay: 1,
     isLeapMonth: false,
     timeIndex: 6,
     timeUnknown: false,
@@ -518,27 +522,27 @@
     return i;
   }
 
-  function yearOptions(){
+  function yearOptions(selected){
     const now = new Date().getFullYear();
     let opts = '';
     for(let y = now; y >= 1930; y--){
-      opts += `<option value="${y}">${y}</option>`;
+      opts += `<option value="${y}" ${String(y) === String(selected) ? 'selected' : ''}>${y}</option>`;
     }
     return opts;
   }
-  function monthOptions(){
+  function monthOptions(selected){
     let opts = '';
-    for(let m = 1; m <= 12; m++) opts += `<option value="${m}">${m}월</option>`;
+    for(let m = 1; m <= 12; m++) opts += `<option value="${m}" ${String(m) === String(selected) ? 'selected' : ''}>${m}월</option>`;
     return opts;
   }
-  function dayOptions(){
+  function dayOptions(selected){
     let opts = '';
-    for(let d = 1; d <= 30; d++) opts += `<option value="${d}">${d}일</option>`;
+    for(let d = 1; d <= 30; d++) opts += `<option value="${d}" ${String(d) === String(selected) ? 'selected' : ''}>${d}일</option>`;
     return opts;
   }
-  function timeOptions(){
-    let opts = TIME_LABELS.map((label, i) => `<option value="${i}">${label}</option>`).join('');
-    opts += `<option value="unknown">태어난 시간을 몰라요</option>`;
+  function timeOptions(selected){
+    let opts = TIME_LABELS.map((label, i) => `<option value="${i}" ${String(i) === String(selected) ? 'selected' : ''}>${label}</option>`).join('');
+    opts += `<option value="unknown" ${selected === 'unknown' ? 'selected' : ''}>태어난 시간을 몰라요</option>`;
     return opts;
   }
 
@@ -761,12 +765,12 @@ ${question}`;
 
       <label class="field-label">생년월일</label>
       ${isSolar ? `
-        <input id="solarDate" type="date" class="text-input" min="1930-01-01" max="${new Date().toISOString().slice(0,10)}">
+        <input id="solarDate" type="date" class="text-input" min="1930-01-01" max="${new Date().toISOString().slice(0,10)}" value="${escapeHtml(state.solarDate)}">
       ` : `
         <div class="row3">
-          <select id="lunarYear" class="text-input">${yearOptions()}</select>
-          <select id="lunarMonth" class="text-input">${monthOptions()}</select>
-          <select id="lunarDay" class="text-input">${dayOptions()}</select>
+          <select id="lunarYear" class="text-input">${yearOptions(state.lunarYear)}</select>
+          <select id="lunarMonth" class="text-input">${monthOptions(state.lunarMonth)}</select>
+          <select id="lunarDay" class="text-input">${dayOptions(state.lunarDay)}</select>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="leapCheck" ${state.isLeapMonth ? 'checked' : ''}>
@@ -775,7 +779,7 @@ ${question}`;
       `}
 
       <label class="field-label">태어난 시간</label>
-      <select id="timeSelect" class="text-input">${timeOptions()}</select>
+      <select id="timeSelect" class="text-input">${timeOptions(state.timeUnknown ? 'unknown' : state.timeIndex)}</select>
 
       <div id="formError" class="form-error"></div>
       <button class="primary-btn" data-action="submit">자미두수 명반 보기</button>
@@ -948,8 +952,27 @@ ${question}`;
     }
   }
 
+  // Keep state in sync with in-progress form input so an unrelated
+  // render() (e.g. toggling gender) doesn't wipe out what's already typed.
+  function handleFormInput(e){
+    const t = e.target;
+    if(!t || !t.id) return;
+    if(t.id === 'nameInput') state.name = t.value;
+    else if(t.id === 'solarDate') state.solarDate = t.value;
+    else if(t.id === 'lunarYear') state.lunarYear = t.value;
+    else if(t.id === 'lunarMonth') state.lunarMonth = t.value;
+    else if(t.id === 'lunarDay') state.lunarDay = t.value;
+    else if(t.id === 'leapCheck') state.isLeapMonth = t.checked;
+    else if(t.id === 'timeSelect'){
+      state.timeUnknown = t.value === 'unknown';
+      if(!state.timeUnknown) state.timeIndex = parseInt(t.value, 10);
+    }
+  }
+
   document.getElementById('app').addEventListener('click', handleClick);
   document.getElementById('app').addEventListener('keydown', handleKeydown);
+  document.getElementById('app').addEventListener('input', handleFormInput);
+  document.getElementById('app').addEventListener('change', handleFormInput);
   render();
 })();
 </script>
