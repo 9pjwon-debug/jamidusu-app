@@ -24,11 +24,12 @@
       var(--bg);
     color:var(--ink);
     min-height:100%;
-    padding:26px 14px 46px;
+    padding:20px 10px 40px;
     display:flex;
     justify-content:center;
+    overflow-x:hidden;
   }
-  .wrap{width:100%;max-width:620px;}
+  .wrap{width:100%;max-width:440px;min-width:0;}
 
   .orbit{
     display:block;
@@ -42,14 +43,14 @@
   }
   .hero h1{
     font-weight:700;
-    font-size:23px;
+    font-size:24px;
     margin:0;
     letter-spacing:.5px;
     color:var(--gold-bright);
   }
   .hero p{
     margin:6px 0 0;
-    font-size:14.5px;
+    font-size:15.5px;
     color:var(--muted);
   }
 
@@ -57,13 +58,13 @@
     background:linear-gradient(180deg,var(--panel),var(--panel-alt));
     border:1px solid var(--hairline);
     border-radius:18px;
-    padding:22px;
+    padding:18px 14px;
     box-shadow:0 20px 46px rgba(0,0,0,.5);
   }
 
   .field-label{
     display:block;
-    font-size:14.5px;
+    font-size:15.5px;
     color:var(--gold);
     margin:16px 0 7px;
     font-weight:600;
@@ -71,12 +72,13 @@
   .field-label:first-child{margin-top:0;}
   input.text-input, select.text-input{
     width:100%;
+    min-width:0;
     background:#0a0f1d;
     border:1px solid rgba(201,163,92,.25);
     color:var(--ink);
     font-family:inherit;
-    font-size:14.5px;
-    padding:11px 13px;
+    font-size:15.5px;
+    padding:11px 10px;
     border-radius:10px;
     outline:none;
   }
@@ -96,7 +98,7 @@
     background:transparent;
     color:var(--muted);
     font-family:inherit;
-    font-size:13.5px;
+    font-size:14.5px;
     font-weight:600;
     padding:9px 6px;
     border-radius:8px;
@@ -107,21 +109,22 @@
     color:#221a0d;
   }
 
-  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;min-width:0;}
+  .row3 select{min-width:0;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .checkbox-row{
     display:flex;
     align-items:center;
     gap:8px;
     margin-top:10px;
-    font-size:13px;
+    font-size:14.5px;
     color:var(--muted);
   }
-  .checkbox-row input{width:16px;height:16px;accent-color:var(--gold);}
+  .checkbox-row input{width:18px;height:18px;flex:none;accent-color:var(--gold);}
 
   .form-error{
     color:var(--danger);
-    font-size:12.5px;
+    font-size:13.5px;
     min-height:16px;
     margin-top:10px;
     font-weight:600;
@@ -134,7 +137,7 @@
     border:none;
     font-family:inherit;
     font-weight:700;
-    font-size:15px;
+    font-size:16.5px;
     padding:14px;
     border-radius:12px;
     cursor:pointer;
@@ -149,7 +152,7 @@
     border:1px solid rgba(201,163,92,.25);
     font-family:inherit;
     font-weight:600;
-    font-size:13.5px;
+    font-size:14.5px;
     padding:11px;
     border-radius:12px;
     cursor:pointer;
@@ -162,20 +165,20 @@
     margin-bottom:18px;
   }
   .summary-name{
-    font-size:20.9px;
+    font-size:21px;
     font-weight:700;
     color:var(--gold-bright);
     margin:0 0 4px;
   }
   .summary-sub{
-    font-size:13.75px;
+    font-size:15px;
     color:var(--muted);
     margin:0;
     line-height:1.7;
   }
   .caveat{
     margin-top:12px;
-    font-size:11.5px;
+    font-size:12.5px;
     color:var(--danger);
     background:rgba(217,133,122,.08);
     border:1px solid rgba(217,133,122,.25);
@@ -187,15 +190,17 @@
     display:grid;
     grid-template-columns:repeat(4,1fr);
     grid-template-rows:repeat(4,auto);
-    gap:5px;
+    gap:4px;
     margin-top:6px;
+    min-width:0;
   }
   .palace-cell{
     background:#0a0f1d;
     border:1px solid rgba(201,163,92,.16);
     border-radius:9px;
-    padding:7px 6px;
-    min-height:96px;
+    padding:6px 4px;
+    min-height:100px;
+    min-width:0;
     display:flex;
     flex-direction:column;
   }
@@ -210,12 +215,12 @@
     margin-bottom:4px;
   }
   .palace-name{
-    font-size:12.65px;
+    font-size:13.5px;
     font-weight:700;
     color:var(--gold-bright);
   }
   .palace-branch{
-    font-size:10.45px;
+    font-size:11.2px;
     color:var(--minor);
   }
   .palace-major{
@@ -225,7 +230,7 @@
     margin-bottom:4px;
   }
   .star-chip{
-    font-size:11px;
+    font-size:11.8px;
     font-weight:700;
     color:#f4e6c4;
     background:rgba(201,163,92,.14);
@@ -236,12 +241,12 @@
   .star-chip em{
     font-style:normal;
     color:var(--gold);
-    font-size:9.35px;
+    font-size:10px;
     margin-left:1px;
   }
   .star-chip.mutagen{background:rgba(217,133,122,.18); color:#f0b3a8;}
   .palace-minor{
-    font-size:9.9px;
+    font-size:10.6px;
     color:var(--minor);
     line-height:1.5;
     word-break:keep-all;
@@ -249,10 +254,11 @@
   .center-panel{
     grid-row:2 / 4;
     grid-column:2 / 4;
+    min-width:0;
     background:radial-gradient(ellipse at 50% 20%, rgba(201,163,92,.10), transparent 70%), #0a0f1d;
     border:1px solid rgba(201,163,92,.2);
     border-radius:9px;
-    padding:10px 8px;
+    padding:10px 6px;
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -260,13 +266,13 @@
     gap:2px;
   }
   .center-panel .c-name{
-    font-size:14.3px;
+    font-size:15.5px;
     font-weight:700;
     color:var(--gold-bright);
     margin:0 0 2px;
   }
   .center-panel .c-line{
-    font-size:10.45px;
+    font-size:11.2px;
     color:var(--muted);
     margin:0;
   }
@@ -278,7 +284,7 @@
     text-align:left;
   }
   .center-mini-grid div{
-    font-size:9.9px;
+    font-size:10.6px;
     color:var(--minor);
   }
   .center-mini-grid span{
@@ -291,7 +297,7 @@
     margin-top:22px;
   }
   .reading-title{
-    font-size:14px;
+    font-size:15.5px;
     font-weight:700;
     color:var(--gold-bright);
     margin:0 0 4px;
@@ -302,7 +308,7 @@
   .reading-title::before{
     content:'✦';
     color:var(--gold);
-    font-size:12px;
+    font-size:13px;
   }
   .reading-rule{
     height:1px;
@@ -310,7 +316,7 @@
     margin-bottom:12px;
   }
   .accordion-body-inner p, .qa-a p{
-    font-size:13.5px;
+    font-size:15px;
     line-height:1.85;
     color:var(--ink);
     margin:0 0 12px;
@@ -338,13 +344,13 @@
     text-align:left;
   }
   .accordion-title{
-    font-size:13.5px;
+    font-size:15px;
     font-weight:700;
     color:var(--gold-bright);
   }
   .accordion-item.expanded .accordion-title{color:var(--ink);}
   .accordion-chevron{
-    font-size:15px;
+    font-size:16px;
     font-weight:700;
     color:var(--gold);
     flex:none;
@@ -363,7 +369,7 @@
     padding:0 2px 16px;
   }
   .reading-loading{
-    font-size:12.5px;
+    font-size:14px;
     color:var(--muted);
     display:flex;
     align-items:center;
@@ -378,7 +384,7 @@
   }
   @keyframes spin{to{transform:rotate(360deg);}}
   .reading-error{
-    font-size:12.5px;
+    font-size:14px;
     color:var(--danger);
   }
 
@@ -396,14 +402,14 @@
   }
   .qa-pair:last-of-type{border-bottom:none;}
   .qa-q{
-    font-size:13px;
+    font-size:14.5px;
     font-weight:700;
     color:var(--gold-bright);
     margin:0 0 5px;
   }
   .qa-q::before{content:'Q. ';color:var(--gold);}
   .qa-a{
-    font-size:13px;
+    font-size:14.5px;
     line-height:1.75;
     color:var(--ink);
     margin:0;
@@ -486,10 +492,9 @@
     name: '',
     gender: '남',
     calType: 'solar',  // 'solar' | 'lunar'
-    solarDate: '',
-    lunarYear: new Date().getFullYear(),
-    lunarMonth: 1,
-    lunarDay: 1,
+    dateYear: new Date().getFullYear(),
+    dateMonth: 1,
+    dateDay: 1,
     isLeapMonth: false,
     timeIndex: 6,
     timeUnknown: false,
@@ -552,9 +557,10 @@
     for(let m = 1; m <= 12; m++) opts += `<option value="${m}" ${String(m) === String(selected) ? 'selected' : ''}>${m}월</option>`;
     return opts;
   }
-  function dayOptions(selected){
+  function dayOptions(selected, maxDay){
+    const max = maxDay || 31;
     let opts = '';
-    for(let d = 1; d <= 30; d++) opts += `<option value="${d}" ${String(d) === String(selected) ? 'selected' : ''}>${d}일</option>`;
+    for(let d = 1; d <= max; d++) opts += `<option value="${d}" ${String(d) === String(selected) ? 'selected' : ''}>${d}일</option>`;
     return opts;
   }
   function timeOptions(selected){
@@ -567,18 +573,14 @@
   function computeAstrolabe(){
     const gender = state.gender; // '남' | '여'
     const timeIndex = state.timeUnknown ? 6 : state.timeIndex;
+    const y = document.getElementById('dateYear').value;
+    const m = document.getElementById('dateMonth').value;
+    const d = document.getElementById('dateDay').value;
+    const dateStr = `${y}-${m}-${d}`;
 
     if(state.calType === 'solar'){
-      const raw = document.getElementById('solarDate').value;
-      if(!raw) throw new Error('생년월일을 입력해주세요.');
-      const [y,m,d] = raw.split('-').map(v => parseInt(v,10));
-      const dateStr = `${y}-${m}-${d}`;
       return iztro.astro.bySolar(dateStr, timeIndex, gender, true, 'ko-KR');
     } else {
-      const y = document.getElementById('lunarYear').value;
-      const m = document.getElementById('lunarMonth').value;
-      const d = document.getElementById('lunarDay').value;
-      const dateStr = `${y}-${m}-${d}`;
       return iztro.astro.byLunar(dateStr, timeIndex, gender, state.isLeapMonth, true, 'ko-KR');
     }
   }
@@ -756,13 +758,6 @@ ${question}`;
       if(errEl) errEl.textContent = '이름을 입력해주세요.';
       return;
     }
-    if(state.calType === 'solar'){
-      const raw = document.getElementById('solarDate').value;
-      if(!raw){
-        if(errEl) errEl.textContent = '생년월일을 입력해주세요.';
-        return;
-      }
-    }
     state.name = name;
 
     let astrolabe;
@@ -812,25 +807,23 @@ ${question}`;
       </div>
 
       <label class="field-label">달력</label>
-      <div class="pill-toggle">
-        <button class="pill-btn ${isSolar ? 'active' : ''}" data-action="set-caltype" data-caltype="solar">양력</button>
-        <button class="pill-btn ${!isSolar ? 'active' : ''}" data-action="set-caltype" data-caltype="lunar">음력</button>
+      <div class="checkbox-row">
+        <input type="checkbox" id="calTypeCheck" ${!isSolar ? 'checked' : ''}>
+        <label for="calTypeCheck">음력으로 입력할게요</label>
       </div>
 
       <label class="field-label">생년월일</label>
-      ${isSolar ? `
-        <input id="solarDate" type="date" class="text-input" min="1930-01-01" max="${new Date().toISOString().slice(0,10)}" value="${escapeHtml(state.solarDate)}">
-      ` : `
-        <div class="row3">
-          <select id="lunarYear" class="text-input">${yearOptions(state.lunarYear)}</select>
-          <select id="lunarMonth" class="text-input">${monthOptions(state.lunarMonth)}</select>
-          <select id="lunarDay" class="text-input">${dayOptions(state.lunarDay)}</select>
-        </div>
+      <div class="row3">
+        <select id="dateYear" class="text-input">${yearOptions(state.dateYear)}</select>
+        <select id="dateMonth" class="text-input">${monthOptions(state.dateMonth)}</select>
+        <select id="dateDay" class="text-input">${dayOptions(state.dateDay, isSolar ? 31 : 30)}</select>
+      </div>
+      ${!isSolar ? `
         <div class="checkbox-row">
           <input type="checkbox" id="leapCheck" ${state.isLeapMonth ? 'checked' : ''}>
           <label for="leapCheck">윤달에 태어났어요</label>
         </div>
-      `}
+      ` : ''}
 
       <label class="field-label">태어난 시간</label>
       <select id="timeSelect" class="text-input">${timeOptions(state.timeUnknown ? 'unknown' : state.timeIndex)}</select>
@@ -982,9 +975,6 @@ ${question}`;
     if(action === 'set-gender'){
       state.gender = btn.dataset.gender;
       render();
-    } else if(action === 'set-caltype'){
-      state.calType = btn.dataset.caltype;
-      render();
     } else if(action === 'toggle-section'){
       const id = btn.dataset.sectionId;
       state.expandedSections[id] = !state.expandedSections[id];
@@ -1021,14 +1011,17 @@ ${question}`;
     const t = e.target;
     if(!t || !t.id) return;
     if(t.id === 'nameInput') state.name = t.value;
-    else if(t.id === 'solarDate') state.solarDate = t.value;
-    else if(t.id === 'lunarYear') state.lunarYear = t.value;
-    else if(t.id === 'lunarMonth') state.lunarMonth = t.value;
-    else if(t.id === 'lunarDay') state.lunarDay = t.value;
+    else if(t.id === 'dateYear') state.dateYear = t.value;
+    else if(t.id === 'dateMonth') state.dateMonth = t.value;
+    else if(t.id === 'dateDay') state.dateDay = t.value;
     else if(t.id === 'leapCheck') state.isLeapMonth = t.checked;
     else if(t.id === 'timeSelect'){
       state.timeUnknown = t.value === 'unknown';
       if(!state.timeUnknown) state.timeIndex = parseInt(t.value, 10);
+    } else if(t.id === 'calTypeCheck'){
+      state.calType = t.checked ? 'lunar' : 'solar';
+      if(state.calType === 'lunar' && parseInt(state.dateDay, 10) > 30) state.dateDay = 30;
+      render();
     }
   }
 
