@@ -1,0 +1,66 @@
+name: iOS build
+
+# ios/ 아래가 바뀔 때만 돈다. (웹 쪽 배포와 무관하게)
+on:
+  push:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
+  pull_request:
+    paths:
+      - "ios/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ios/TodayChinese
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 툴체인 확인
+        run: |
+          xcodebuild -version
+          python3 --version
+
+      - name: 정적 검사
+        run: |
+          python3 Tools/validate_project.py .
+          python3 Tools/check_swift.py .
+          python3 Tools/sim_daily.py .
+
+      - name: Scriptable 스크립트 검사
+        run: python3 Tools/check_scriptable.py .
+
+      # words.json 만 고치고 재생성을 잊는 사고를 막는다.
+      - name: Scriptable 스크립트가 words.json 과 동기화됐는지
+        run: |
+          python3 Tools/gen_scriptable.py .
+          git diff --exit-code -- Scriptable/TodayChinese.js             || { echo "::error::words.json 이 바뀌었는데 Scriptable/TodayChinese.js 를 재생성하지 않았습니다. 'python Tools/gen_scriptable.py' 를 돌리고 커밋하세요."; exit 1; }
+
+      # 앱 스킴을 빌드하면 위젯 익스텐션이 타깃 의존성으로 함께 빌드되고
+      # Embed Foundation Extensions 단계까지 검증된다.
+      - name: 빌드 (시뮬레이터, 서명 없음)
+        run: |
+          xcodebuild build \
+            -project TodayChinese.xcodeproj \
+            -scheme TodayChinese \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            ONLY_ACTIVE_ARCH=NO
+
+      - name: 위젯 익스텐션 단독 빌드
+        run: |
+          xcodebuild build \
+            -project TodayChinese.xcodeproj \
+            -scheme TodayChineseWidgetExtension \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            ONLY_ACTIVE_ARCH=NO

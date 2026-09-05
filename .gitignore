@@ -3,3 +3,9 @@ node_modules/
 .env
 .env*.local
 .claude/
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
