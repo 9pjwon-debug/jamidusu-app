@@ -1,7 +1,13 @@
 {
   "functions": {
     "api/gemini.js": {
+      "maxDuration": 180
+    },
+    "api/fashion-image.js": {
       "maxDuration": 60
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/grow", "destination": "/grow.html" }
+  ]
 }
