@@ -511,20 +511,21 @@
   };
 
   // ---------------- usage limits (per-browser, simple abuse guard) ----------------
-  const USAGE_KEY_READING = 'zwds_reading_used_v1';
-  const USAGE_KEY_FOLLOWUP = 'zwds_followup_used_v1';
+  const USAGE_KEY_READING_COUNT = 'zwds_reading_count_v2';
+  const READING_LIMIT = 3;
+  const FOLLOWUP_LIMIT_PER_READING = 2;
 
-  function hasUsedReading(){
-    try{ return localStorage.getItem(USAGE_KEY_READING) === '1'; }catch(e){ return false; }
+  function getReadingCount(){
+    try{ return parseInt(localStorage.getItem(USAGE_KEY_READING_COUNT), 10) || 0; }catch(e){ return 0; }
   }
-  function markReadingUsed(){
-    try{ localStorage.setItem(USAGE_KEY_READING, '1'); }catch(e){}
+  function hasReachedReadingLimit(){
+    return getReadingCount() >= READING_LIMIT;
   }
-  function hasUsedFollowup(){
-    try{ return localStorage.getItem(USAGE_KEY_FOLLOWUP) === '1'; }catch(e){ return false; }
+  function incrementReadingCount(){
+    try{ localStorage.setItem(USAGE_KEY_READING_COUNT, String(getReadingCount() + 1)); }catch(e){}
   }
-  function markFollowupUsed(){
-    try{ localStorage.setItem(USAGE_KEY_FOLLOWUP, '1'); }catch(e){}
+  function hasReachedFollowupLimit(){
+    return state.followUps.length >= FOLLOWUP_LIMIT_PER_READING;
   }
 
   function escapeHtml(s){
@@ -724,12 +725,11 @@ ${question}`;
   }
 
   function handleFollowUpSubmit(){
-    if(state.followUpLoading || hasUsedFollowup()) return;
+    if(state.followUpLoading || hasReachedFollowupLimit()) return;
     const input = document.getElementById('followUpInput');
     const question = (input && input.value || '').trim().slice(0, 200);
     if(!question) return;
     input.value = '';
-    markFollowupUsed();
     const entry = { question, answer: null, error: false };
     const priorHistory = state.followUps.slice();
     state.followUps.push(entry);
@@ -751,8 +751,8 @@ ${question}`;
   // ---------------- flow ----------------
   async function handleSubmit(){
     const errEl = document.getElementById('formError');
-    if(hasUsedReading()){
-      if(errEl) errEl.textContent = '죄송해요, 체험은 1인당 1회만 가능해요.';
+    if(hasReachedReadingLimit()){
+      if(errEl) errEl.textContent = `죄송해요, 체험은 브라우저당 ${READING_LIMIT}회까지만 가능해요.`;
       return;
     }
     const nameInput = document.getElementById('nameInput');
@@ -771,7 +771,7 @@ ${question}`;
       return;
     }
 
-    markReadingUsed();
+    incrementReadingCount();
     state.astrolabe = astrolabe;
     state.screen = 'result';
     render();
@@ -793,10 +793,10 @@ ${question}`;
   // ---------------- rendering ----------------
   function renderStartHTML(){
     const isSolar = state.calType === 'solar';
-    const limitReached = hasUsedReading();
+    const limitReached = hasReachedReadingLimit();
     if(limitReached){
       return `
-        <p class="summary-sub" style="text-align:center">이 브라우저에서는 이미 체험을 사용하셨어요.<br>체험은 1인당 1회로 제한하고 있어요. 양해 부탁드려요 🙏</p>
+        <p class="summary-sub" style="text-align:center">이 브라우저에서는 체험 횟수를 모두 사용하셨어요.<br>체험은 브라우저당 ${READING_LIMIT}회로 제한하고 있어요. 양해 부탁드려요 🙏</p>
       `;
     }
     return `
@@ -911,8 +911,8 @@ ${question}`;
       return `<div class="qa-pair"><p class="qa-q">${escapeHtml(f.question)}</p>${answerHtml}</div>`;
     }).join('');
 
-    const followupInputRow = hasUsedFollowup()
-      ? `<p class="summary-sub" style="margin-top:10px">추가 질문은 1회만 가능해요. 이미 사용하셨어요.</p>`
+    const followupInputRow = hasReachedFollowupLimit()
+      ? `<p class="summary-sub" style="margin-top:10px">추가 질문은 이 명반당 ${FOLLOWUP_LIMIT_PER_READING}회까지만 가능해요. 이미 다 사용하셨어요.</p>`
       : `
         <div class="followup-row">
           <input id="followUpInput" class="text-input" placeholder="예: 올해 연애운은 어때요?" maxlength="200" ${state.followUpLoading ? 'disabled' : ''}>
